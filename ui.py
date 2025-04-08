@@ -13,17 +13,10 @@ class JobTrackerApp:
         self.root.geometry("1000x500")
         self.root.resizable(False, False)
 
-        # 🎨 Appliquer les styles personnalisés
+        # 🎨 Appliquer les styles
         appliquer_styles(self.root)
 
-        # === BARRE DE RECHERCHE ===
-        self.search_var = tk.StringVar()
-        ttk.Label(root, text="🔎 Rechercher (Entreprise / Poste / Statut) :").place(x=370, y=0)
-        self.entry_search = ttk.Entry(root, textvariable=self.search_var, width=40)
-        self.entry_search.place(x=620, y=0)
-        self.entry_search.bind("<KeyRelease>", self.rechercher_candidatures)
-
-        # === FORMULAIRE ===
+        # === FORMULAIRE GAUCHE ===
         self.frame_form = ttk.LabelFrame(root, text="Nouvelle candidature")
         self.frame_form.place(x=10, y=10, width=350, height=480)
 
@@ -39,21 +32,31 @@ class JobTrackerApp:
             entry.grid(row=i, column=1, padx=5, pady=3)
             self.entries[label] = entry
 
-        # === BOUTONS ===
+        # === BOUTONS FORMULAIRE ===
         ttk.Button(self.frame_form, text="Ajouter", command=self.ajouter).grid(row=7, column=0, pady=10)
         ttk.Button(self.frame_form, text="Modifier", command=self.modifier).grid(row=7, column=1)
         ttk.Button(self.frame_form, text="Supprimer", command=self.supprimer).grid(row=8, column=0)
         ttk.Button(self.frame_form, text="Vider", command=self.vider_formulaire).grid(row=8, column=1)
 
-        # === TABLEAU DES CANDIDATURES ===
+        # === ZONE TABLEAU + BARRE DE RECHERCHE (DROITE) ===
+        self.frame_table = ttk.LabelFrame(root, text="Candidatures enregistrées")
+        self.frame_table.place(x=370, y=10, width=620, height=480)
+
+        # 🔎 BARRE DE RECHERCHE
+        self.search_var = tk.StringVar()
+        ttk.Label(self.frame_table, text="🔍 Rechercher :").grid(row=0, column=0, padx=10, pady=8, sticky="w")
+        self.entry_search = ttk.Entry(self.frame_table, textvariable=self.search_var, width=40)
+        self.entry_search.grid(row=0, column=1, padx=5, pady=8, sticky="w")
+        self.entry_search.bind("<KeyRelease>", self.rechercher_candidatures)
+
+        # 📋 TABLEAU
         self.tree = ttk.Treeview(
-            root,
+            self.frame_table,
             columns=("id", "entreprise", "poste", "lien", "date", "statut", "reponse", "commentaire"),
             show="headings"
         )
-        self.tree.place(x=370, y=30, width=620, height=450)
+        self.tree.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
 
-        # En-têtes
         self.tree.heading("id", text="ID")
         self.tree.heading("entreprise", text="Entreprise")
         self.tree.heading("poste", text="Poste")
@@ -63,7 +66,6 @@ class JobTrackerApp:
         self.tree.heading("reponse", text="Réponse")
         self.tree.heading("commentaire", text="Commentaire")
 
-        # Colonnes
         self.tree.column("id", width=30, anchor="center")
         self.tree.column("entreprise", width=100)
         self.tree.column("poste", width=100)
@@ -73,13 +75,12 @@ class JobTrackerApp:
         self.tree.column("reponse", width=80)
         self.tree.column("commentaire", width=150)
 
-        # Double clic → remplir formulaire
         self.tree.bind("<Double-1>", self.remplir_formulaire_depuis_tableau)
 
-        # Charger les données au démarrage
+        # Chargement initial des données
         self.afficher_candidatures()
 
-    # === ACTIONS ===
+    # === MÉTHODES ===
 
     def get_form_data(self):
         return tuple(entry.get() for entry in self.entries.values())
@@ -98,7 +99,7 @@ class JobTrackerApp:
 
     def ajouter(self):
         data = self.get_form_data()
-        if data[0] and data[1]:  # entreprise & poste obligatoires
+        if data[0] and data[1]:
             ajouter_candidature(data)
             messagebox.showinfo("Succès", "Candidature ajoutée.")
             self.vider_formulaire()
@@ -139,7 +140,7 @@ class JobTrackerApp:
         values = self.tree.item(selected)["values"]
         for i, key in enumerate(self.entries):
             self.entries[key].delete(0, tk.END)
-            self.entries[key].insert(0, values[i + 1])  # i+1 pour ignorer l'ID
+            self.entries[key].insert(0, values[i + 1])  # i+1 = ignorer l'ID
 
     def rechercher_candidatures(self, event=None):
         query = self.search_var.get().lower()
