@@ -13,8 +13,15 @@ class JobTrackerApp:
         self.root.geometry("1000x500")
         self.root.resizable(False, False)
 
-        # 🎨 Appliquer le style personnalisé
+        # 🎨 Appliquer les styles personnalisés
         appliquer_styles(self.root)
+
+        # === BARRE DE RECHERCHE ===
+        self.search_var = tk.StringVar()
+        ttk.Label(root, text="🔎 Rechercher (Entreprise / Poste / Statut) :").place(x=370, y=0)
+        self.entry_search = ttk.Entry(root, textvariable=self.search_var, width=40)
+        self.entry_search.place(x=620, y=0)
+        self.entry_search.bind("<KeyRelease>", self.rechercher_candidatures)
 
         # === FORMULAIRE ===
         self.frame_form = ttk.LabelFrame(root, text="Nouvelle candidature")
@@ -38,15 +45,15 @@ class JobTrackerApp:
         ttk.Button(self.frame_form, text="Supprimer", command=self.supprimer).grid(row=8, column=0)
         ttk.Button(self.frame_form, text="Vider", command=self.vider_formulaire).grid(row=8, column=1)
 
-        # === TABLEAU ===
+        # === TABLEAU DES CANDIDATURES ===
         self.tree = ttk.Treeview(
             root,
             columns=("id", "entreprise", "poste", "lien", "date", "statut", "reponse", "commentaire"),
             show="headings"
         )
-        self.tree.place(x=370, y=10, width=620, height=470)
+        self.tree.place(x=370, y=30, width=620, height=450)
 
-        # En-têtes de colonnes
+        # En-têtes
         self.tree.heading("id", text="ID")
         self.tree.heading("entreprise", text="Entreprise")
         self.tree.heading("poste", text="Poste")
@@ -56,8 +63,8 @@ class JobTrackerApp:
         self.tree.heading("reponse", text="Réponse")
         self.tree.heading("commentaire", text="Commentaire")
 
-        # Largeurs de colonnes
-        self.tree.column("id", width=40, anchor="center")
+        # Colonnes
+        self.tree.column("id", width=30, anchor="center")
         self.tree.column("entreprise", width=100)
         self.tree.column("poste", width=100)
         self.tree.column("lien", width=150)
@@ -66,13 +73,13 @@ class JobTrackerApp:
         self.tree.column("reponse", width=80)
         self.tree.column("commentaire", width=150)
 
-        # Double clic sur une ligne → remplit le formulaire
+        # Double clic → remplir formulaire
         self.tree.bind("<Double-1>", self.remplir_formulaire_depuis_tableau)
 
-        # Charger les candidatures
+        # Charger les données au démarrage
         self.afficher_candidatures()
 
-    # === FONCTIONS UTILITAIRES ===
+    # === ACTIONS ===
 
     def get_form_data(self):
         return tuple(entry.get() for entry in self.entries.values())
@@ -91,7 +98,7 @@ class JobTrackerApp:
 
     def ajouter(self):
         data = self.get_form_data()
-        if data[0] and data[1]:  # Entreprise et poste sont obligatoires
+        if data[0] and data[1]:  # entreprise & poste obligatoires
             ajouter_candidature(data)
             messagebox.showinfo("Succès", "Candidature ajoutée.")
             self.vider_formulaire()
@@ -133,3 +140,16 @@ class JobTrackerApp:
         for i, key in enumerate(self.entries):
             self.entries[key].delete(0, tk.END)
             self.entries[key].insert(0, values[i + 1])  # i+1 pour ignorer l'ID
+
+    def rechercher_candidatures(self, event=None):
+        query = self.search_var.get().lower()
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        for row in lire_candidatures():
+            entreprise = str(row[1]).lower()
+            poste = str(row[2]).lower()
+            statut = str(row[5]).lower()
+
+            if query in entreprise or query in poste or query in statut:
+                self.tree.insert("", "end", values=row)
