@@ -1,28 +1,21 @@
 import tkinter as tk
 from tkinter import ttk
 
-# 🎨 Palette de couleurs
 COLORS = {
-    "background": "#f7f9fc",
+    "background": "#f2f6fc",
     "primary": "#2f80ed",
     "secondary": "#56cc9d",
-    "text": "#333333",
+    "text": "#1f2d3d",
     "white": "#ffffff",
     "danger": "#eb5757",
-    "gray": "#dfe6e9"
+    "gray": "#e0e0e0"
 }
 
-# 🅰️ Style global de police
 FONT = ("Segoe UI", 10)
 
 def appliquer_styles(root):
-    """
-    Applique les styles aux composants Tkinter via ttk.Style
-    """
     style = ttk.Style(root)
     root.configure(bg=COLORS["background"])
-    
-    # Choisir un thème compatible avec les couleurs
     style.theme_use("clam")
 
     style.configure("Treeview",
@@ -40,19 +33,16 @@ def appliquer_styles(root):
                     foreground=COLORS["white"])
 
     style.configure("TButton",
-                    font=FONT,
+                    font=("Segoe UI", 10, "bold"),
                     padding=6,
                     background=COLORS["primary"],
                     foreground=COLORS["white"])
 
-    style.map("TButton",
-              background=[("active", COLORS["secondary"])])
+    style.map("TButton", background=[("active", COLORS["secondary"])])
 
     style.configure("TLabel",
                     font=FONT,
                     background=COLORS["background"],
                     foreground=COLORS["text"])
 
-    style.configure("TEntry",
-                    padding=5,
-                    font=FONT)
+    style.configure("TEntry", font=FONT, padding=4)
