@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import messagebox, ttk
 
@@ -13,10 +14,16 @@ class JobTrackerApp:
         self.root.geometry("1000x500")
         self.root.resizable(False, False)
 
-        # 🎨 Appliquer les styles
+        # 🎨 Appliquer le style
         appliquer_styles(self.root)
 
-        # === FORMULAIRE GAUCHE ===
+        # === INSÉRER LE LOGO ===
+        logo_path = os.path.join("assets", "logo.png")
+        if os.path.exists(logo_path):
+            self.logo_img = tk.PhotoImage(file=logo_path)
+            ttk.Label(root, image=self.logo_img).place(x=870, y=5)
+
+        # === FORMULAIRE ===
         self.frame_form = ttk.LabelFrame(root, text="Nouvelle candidature")
         self.frame_form.place(x=10, y=10, width=350, height=480)
 
@@ -32,24 +39,23 @@ class JobTrackerApp:
             entry.grid(row=i, column=1, padx=5, pady=3)
             self.entries[label] = entry
 
-        # === BOUTONS FORMULAIRE ===
+        # === BOUTONS ===
         ttk.Button(self.frame_form, text="Ajouter", command=self.ajouter).grid(row=7, column=0, pady=10)
         ttk.Button(self.frame_form, text="Modifier", command=self.modifier).grid(row=7, column=1)
         ttk.Button(self.frame_form, text="Supprimer", command=self.supprimer).grid(row=8, column=0)
         ttk.Button(self.frame_form, text="Vider", command=self.vider_formulaire).grid(row=8, column=1)
 
-        # === ZONE TABLEAU + BARRE DE RECHERCHE (DROITE) ===
+        # === ZONE TABLEAU + RECHERCHE ===
         self.frame_table = ttk.LabelFrame(root, text="Candidatures enregistrées")
         self.frame_table.place(x=370, y=10, width=620, height=480)
 
-        # 🔎 BARRE DE RECHERCHE
         self.search_var = tk.StringVar()
         ttk.Label(self.frame_table, text="🔍 Rechercher :").grid(row=0, column=0, padx=10, pady=8, sticky="w")
         self.entry_search = ttk.Entry(self.frame_table, textvariable=self.search_var, width=40)
         self.entry_search.grid(row=0, column=1, padx=5, pady=8, sticky="w")
         self.entry_search.bind("<KeyRelease>", self.rechercher_candidatures)
 
-        # 📋 TABLEAU
+        # === TABLEAU ===
         self.tree = ttk.Treeview(
             self.frame_table,
             columns=("id", "entreprise", "poste", "lien", "date", "statut", "reponse", "commentaire"),
@@ -77,7 +83,6 @@ class JobTrackerApp:
 
         self.tree.bind("<Double-1>", self.remplir_formulaire_depuis_tableau)
 
-        # Chargement initial des données
         self.afficher_candidatures()
 
     # === MÉTHODES ===
@@ -140,7 +145,7 @@ class JobTrackerApp:
         values = self.tree.item(selected)["values"]
         for i, key in enumerate(self.entries):
             self.entries[key].delete(0, tk.END)
-            self.entries[key].insert(0, values[i + 1])  # i+1 = ignorer l'ID
+            self.entries[key].insert(0, values[i + 1])
 
     def rechercher_candidatures(self, event=None):
         query = self.search_var.get().lower()
