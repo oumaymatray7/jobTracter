@@ -18,7 +18,7 @@ class JobTrackerApp:
         appliquer_styles(self.root)
 
         # === INSÉRER LE LOGO ===
-        logo_path = os.path.join("assets", "logo.png")
+        logo_path = os.path.join("assets", "assets\logo.png")
         if os.path.exists(logo_path):
             self.logo_img = tk.PhotoImage(file=logo_path)
             ttk.Label(root, image=self.logo_img).place(x=870, y=5)
