@@ -2,6 +2,8 @@ import os
 import tkinter as tk
 from tkinter import messagebox, ttk
 
+from PIL import Image, ImageTk
+
 from database import (ajouter_candidature, lire_candidatures,
                       modifier_candidature, supprimer_candidature)
 from styles import appliquer_styles
@@ -14,14 +16,27 @@ class JobTrackerApp:
         self.root.geometry("1000x500")
         self.root.resizable(False, False)
 
-        # 🎨 Appliquer le style
+        # === Appliquer le style ===
         appliquer_styles(self.root)
 
-        # === INSÉRER LE LOGO ===
-        logo_path = os.path.join("assets", "assets\logo.png")
-        if os.path.exists(logo_path):
-            self.logo_img = tk.PhotoImage(file=logo_path)
-            ttk.Label(root, image=self.logo_img).place(x=870, y=5)
+        # === CHARGEMENT DES ICONES ===
+        self.icons = {}
+
+        def charger_image(nom_fichier, size=(18, 18)):
+            path = os.path.join("assets", nom_fichier)
+            if os.path.exists(path):
+                img = Image.open(path).resize(size)
+                return ImageTk.PhotoImage(img)
+            return None
+
+        self.icons["logo"] = charger_image("assets\logo.png", size=(90, 90))
+        self.icons["add"] = charger_image("assets\add.png")
+        self.icons["edit"] = charger_image("assets\edit_icon.webp")
+        self.icons["delete"] = charger_image("assets\delete.png")
+
+        # === LOGO APP ===
+        if self.icons["logo"]:
+            ttk.Label(root, image=self.icons["logo"]).place(x=125, y=10)
 
         # === FORMULAIRE ===
         self.frame_form = ttk.LabelFrame(root, text="Nouvelle candidature")
@@ -39,11 +54,36 @@ class JobTrackerApp:
             entry.grid(row=i, column=1, padx=5, pady=3)
             self.entries[label] = entry
 
-        # === BOUTONS ===
-        ttk.Button(self.frame_form, text="Ajouter", command=self.ajouter).grid(row=7, column=0, pady=10)
-        ttk.Button(self.frame_form, text="Modifier", command=self.modifier).grid(row=7, column=1)
-        ttk.Button(self.frame_form, text="Supprimer", command=self.supprimer).grid(row=8, column=0)
-        ttk.Button(self.frame_form, text="Vider", command=self.vider_formulaire).grid(row=8, column=1)
+        # === BOUTONS AVEC ICONES ===
+        ttk.Button(
+            self.frame_form,
+            text=" Ajouter",
+            image=self.icons["add"],
+            compound="left",
+            command=self.ajouter
+        ).grid(row=7, column=0, pady=10)
+
+        ttk.Button(
+            self.frame_form,
+            text=" Modifier",
+            image=self.icons["edit"],
+            compound="left",
+            command=self.modifier
+        ).grid(row=7, column=1)
+
+        ttk.Button(
+            self.frame_form,
+            text=" Supprimer",
+            image=self.icons["delete"],
+            compound="left",
+            command=self.supprimer
+        ).grid(row=8, column=0)
+
+        ttk.Button(
+            self.frame_form,
+            text=" Vider",
+            command=self.vider_formulaire
+        ).grid(row=8, column=1)
 
         # === ZONE TABLEAU + RECHERCHE ===
         self.frame_table = ttk.LabelFrame(root, text="Candidatures enregistrées")
@@ -83,6 +123,7 @@ class JobTrackerApp:
 
         self.tree.bind("<Double-1>", self.remplir_formulaire_depuis_tableau)
 
+        # === Afficher les données ===
         self.afficher_candidatures()
 
     # === MÉTHODES ===
