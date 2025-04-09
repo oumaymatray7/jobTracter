@@ -1,3 +1,6 @@
+import tkinter as tk  # Importer tkinter
+from tkinter import ttk  # Ajouter cet import pour ttk
+
 # Dictionnaire de couleurs pour les modes clair et sombre
 COLORS = {
     "background": "#f2f6fc",  # clair
@@ -20,40 +23,11 @@ FONT = ("Segoe UI", 10)
 def appliquer_styles(root, dark_mode=False):
     style = ttk.Style(root)
 
-    # Appliquer les couleurs de base
     if dark_mode:
-        root.configure(bg=COLORS["dark_background"])  # Fond sombre
-        style.configure("TButton",
-                        background=COLORS["dark_primary"],  # Boutons sombres
-                        foreground=COLORS["white"])
-        style.configure("Treeview",
-                        background=COLORS["dark_background"],  # Arrière-plan sombre
-                        foreground=COLORS["dark_text"],  # Texte clair
-                        rowheight=25,
-                        fieldbackground=COLORS["dark_background"])
-        style.configure("Treeview.Heading",
-                        font=("Segoe UI", 10, "bold"),
-                        background=COLORS["dark_primary"],
-                        foreground=COLORS["white"])
-        style.configure("TLabel", background=COLORS["dark_background"], foreground=COLORS["dark_text"])
-        style.configure("TEntry", font=FONT, padding=4, fieldbackground=COLORS["dark_background"])
-
+        root.configure(bg="#333333")  # Fond sombre
+        for widget in root.winfo_children():
+            widget.config(bg="#333333", fg="white")
     else:
-        root.configure(bg=COLORS["background"])  # Fond clair
-        style.configure("TButton",
-                        background=COLORS["primary"],  # Boutons clairs
-                        foreground=COLORS["white"])
-        style.configure("Treeview",
-                        background=COLORS["white"],  # Arrière-plan clair
-                        foreground=COLORS["text"],  # Texte foncé
-                        rowheight=25,
-                        fieldbackground=COLORS["white"])
-        style.configure("Treeview.Heading",
-                        font=("Segoe UI", 10, "bold"),
-                        background=COLORS["primary"],
-                        foreground=COLORS["white"])
-        style.configure("TLabel", background=COLORS["background"], foreground=COLORS["text"])
-        style.configure("TEntry", font=FONT, padding=4)
-    
-    style.map("Treeview", background=[('selected', COLORS["primary"])])
-    style.map("TButton", background=[("active", COLORS["secondary"])])
+        root.configure(bg="#f2f6fc")  # Fond clair
+        for widget in root.winfo_children():
+            widget.config(bg="#f2f6fc", fg="black")
