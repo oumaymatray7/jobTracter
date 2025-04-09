@@ -24,5 +24,5 @@ Avant de commencer, assurez-vous d'avoir installé les dépendances nécessaires
 Clonez le dépôt sur votre machine locale en utilisant Git :
 
 ```bash
-git clone https://github.com/votre-utilisateur/job-tracker.git
+git clone https://github.com/oumaymatray7/job-tracker.git
 cd job-tracker
