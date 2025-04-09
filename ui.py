@@ -1,11 +1,14 @@
 import os
 import tkinter as tk
 from tkinter import messagebox, ttk
-
 from PIL import Image, ImageTk
 
-from database import (ajouter_candidature, lire_candidatures,
-                      modifier_candidature, supprimer_candidature)
+from database import (
+    ajouter_candidature,
+    lire_candidatures,
+    modifier_candidature,
+    supprimer_candidature
+)
 from styles import appliquer_styles
 
 
@@ -188,12 +191,12 @@ class JobTrackerApp:
                 self.tree.insert("", "end", values=row)
 
     def toggle_mode(self):
-        self.light_mode = not self.light_mode
+       self.light_mode = not self.light_mode
         # Appliquer le style approprié en fonction du mode
-        appliquer_styles(self.root, self.light_mode)
+       appliquer_styles(self.root, self.light_mode)
 
         # Changer le texte du bouton
-        if self.light_mode:
-            self.toggle_button.config(text="Mode Sombre")
-        else:
-            self.toggle_button.config(text="Mode Clair")
+       if self.light_mode:
+          self.toggle_button.config(text="Mode Sombre")
+       else:
+         self.toggle_button.config(text="Mode Clair")

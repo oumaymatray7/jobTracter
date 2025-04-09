@@ -1,5 +1,4 @@
 import tkinter as tk
-
 from database import create_database
 from ui import JobTrackerApp
 
