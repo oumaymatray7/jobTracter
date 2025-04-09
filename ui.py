@@ -16,29 +16,43 @@ class JobTrackerApp:
         self.root.geometry("1000x500")
         self.root.resizable(False, False)
 
-        # === Appliquer le style ===
-        appliquer_styles(self.root)
+        # Initialiser en mode clair
+        self.light_mode = True
+        appliquer_styles(self.root, self.light_mode)
 
-        # === CHARGEMENT DES ICONES ===
+        # === Ajouter un bouton pour basculer en Dark Mode ===
+        self.toggle_button = ttk.Button(
+            root, text="Mode Sombre", command=self.toggle_mode
+        )
+        self.toggle_button.place(x=900, y=10)  # Positionner le bouton en haut à droite
+
+        # === Chargement des icônes ===
         self.icons = {}
 
-        def charger_image(nom_fichier, size=(18, 18)):
-            path = os.path.join("assets", nom_fichier)
+        def charger_image(nom_fichier, size=(18, 18), color=None):
+            path = os.path.join(os.path.dirname(__file__), "assets", nom_fichier)
             if os.path.exists(path):
-                img = Image.open(path).resize(size)
+                img = Image.open(path).convert("RGBA").resize(size)
+                if color:
+                    r, g, b = color
+                    pixels = img.getdata()
+                    new_pixels = [(r, g, b, p[3]) if p[3] > 0 else p for p in pixels]
+                    img.putdata(new_pixels)
                 return ImageTk.PhotoImage(img)
             return None
 
-        self.icons["logo"] = charger_image("assets\logo.png", size=(90, 90))
-        self.icons["add"] = charger_image("assets\add.png")
-        self.icons["edit"] = charger_image("assets\edit_icon.webp")
-        self.icons["delete"] = charger_image("assets\delete.png")
+        icon_color = (0, 0, 0)  # Noir pour harmoniser
+        self.icons["logo"] = charger_image("logo.png", size=(90, 90))
+        self.icons["add"] = charger_image("add.png", size=(16, 16), color=icon_color)
+        self.icons["edit"] = charger_image("edit_icon.webp", size=(16, 16), color=icon_color)
+        self.icons["delete"] = charger_image("delete.png", size=(16, 16), color=icon_color)
 
-        # === LOGO APP ===
         if self.icons["logo"]:
-            ttk.Label(root, image=self.icons["logo"]).place(x=125, y=10)
+            logo_label = ttk.Label(root, image=self.icons["logo"])
+            logo_label.image = self.icons["logo"]
+            logo_label.place(x=125, y=10)
 
-        # === FORMULAIRE ===
+        # === Formulaire gauche ===
         self.frame_form = ttk.LabelFrame(root, text="Nouvelle candidature")
         self.frame_form.place(x=10, y=10, width=350, height=480)
 
@@ -54,38 +68,13 @@ class JobTrackerApp:
             entry.grid(row=i, column=1, padx=5, pady=3)
             self.entries[label] = entry
 
-        # === BOUTONS AVEC ICONES ===
-        ttk.Button(
-            self.frame_form,
-            text=" Ajouter",
-            image=self.icons["add"],
-            compound="left",
-            command=self.ajouter
-        ).grid(row=7, column=0, pady=10)
+        # === Boutons ===
+        ttk.Button(self.frame_form, text="Ajouter", image=self.icons["add"], compound="left", command=self.ajouter).grid(row=7, column=0, pady=10)
+        ttk.Button(self.frame_form, text="Modifier", image=self.icons["edit"], compound="left", command=self.modifier).grid(row=7, column=1)
+        ttk.Button(self.frame_form, text="Supprimer", image=self.icons["delete"], compound="left", command=self.supprimer).grid(row=8, column=0)
+        ttk.Button(self.frame_form, text="Vider", command=self.vider_formulaire).grid(row=8, column=1)
 
-        ttk.Button(
-            self.frame_form,
-            text=" Modifier",
-            image=self.icons["edit"],
-            compound="left",
-            command=self.modifier
-        ).grid(row=7, column=1)
-
-        ttk.Button(
-            self.frame_form,
-            text=" Supprimer",
-            image=self.icons["delete"],
-            compound="left",
-            command=self.supprimer
-        ).grid(row=8, column=0)
-
-        ttk.Button(
-            self.frame_form,
-            text=" Vider",
-            command=self.vider_formulaire
-        ).grid(row=8, column=1)
-
-        # === ZONE TABLEAU + RECHERCHE ===
+        # === Zone tableau + recherche ===
         self.frame_table = ttk.LabelFrame(root, text="Candidatures enregistrées")
         self.frame_table.place(x=370, y=10, width=620, height=480)
 
@@ -95,7 +84,6 @@ class JobTrackerApp:
         self.entry_search.grid(row=0, column=1, padx=5, pady=8, sticky="w")
         self.entry_search.bind("<KeyRelease>", self.rechercher_candidatures)
 
-        # === TABLEAU ===
         self.tree = ttk.Treeview(
             self.frame_table,
             columns=("id", "entreprise", "poste", "lien", "date", "statut", "reponse", "commentaire"),
@@ -123,10 +111,9 @@ class JobTrackerApp:
 
         self.tree.bind("<Double-1>", self.remplir_formulaire_depuis_tableau)
 
-        # === Afficher les données ===
         self.afficher_candidatures()
 
-    # === MÉTHODES ===
+    # === Méthodes ===
 
     def get_form_data(self):
         return tuple(entry.get() for entry in self.entries.values())
@@ -146,6 +133,10 @@ class JobTrackerApp:
     def ajouter(self):
         data = self.get_form_data()
         if data[0] and data[1]:
+            for row in self.tree.get_children():
+                if self.tree.item(row)["values"][1] == data[0] and self.tree.item(row)["values"][2] == data[1]:
+                    messagebox.showwarning("Doublon", "Cette candidature existe déjà.")
+                    return
             ajouter_candidature(data)
             messagebox.showinfo("Succès", "Candidature ajoutée.")
             self.vider_formulaire()
@@ -192,11 +183,17 @@ class JobTrackerApp:
         query = self.search_var.get().lower()
         for item in self.tree.get_children():
             self.tree.delete(item)
-
         for row in lire_candidatures():
-            entreprise = str(row[1]).lower()
-            poste = str(row[2]).lower()
-            statut = str(row[5]).lower()
-
-            if query in entreprise or query in poste or query in statut:
+            if query in str(row[1]).lower() or query in str(row[2]).lower() or query in str(row[5]).lower():
                 self.tree.insert("", "end", values=row)
+
+    def toggle_mode(self):
+        self.light_mode = not self.light_mode
+        # Appliquer le style approprié en fonction du mode
+        appliquer_styles(self.root, self.light_mode)
+
+        # Changer le texte du bouton
+        if self.light_mode:
+            self.toggle_button.config(text="Mode Sombre")
+        else:
+            self.toggle_button.config(text="Mode Clair")
