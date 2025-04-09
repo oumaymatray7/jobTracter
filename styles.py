@@ -3,19 +3,20 @@ from tkinter import ttk
 
 # Dictionnaire de couleurs pour les modes clair et sombre
 COLORS = {
-    "background": "#f2f6fc",  # clair
-    "primary": "#2f80ed",
-    "secondary": "#56cc9d",
-    "text": "#1f2d3d",
-    "white": "#ffffff",
-    "danger": "#eb5757",
-    "gray": "#e0e0e0",
+    # Mode clair
+    "background": "#f4f6f9",  # Fond clair
+    "primary": "#007bff",  # Bleu clair pour les éléments principaux
+    "secondary": "#28a745",  # Vert pour les éléments secondaires
+    "text": "#333333",  # Texte foncé
+    "white": "#e5e555",  # Blanc pur
+    "danger": "#e53e3e",  # Rouge vif pour les alertes
+    "gray": "#e5e5e5",  # Gris clair pour le fond des tableaux ou bordures
     
-    # Sombre
-    "dark_background": "#333333",
-    "dark_text": "#ffffff",
-    "dark_primary": "#1e4db6",
-    "dark_secondary": "#45b29d",
+    # Mode sombre
+    "dark_background": "#181818",  # Fond sombre
+    "dark_text": "#f0f0f0",  # Texte clair sur fond sombre
+    "dark_primary": "#1c7ed6",  # Bleu foncé pour les boutons et éléments principaux
+    "dark_secondary": "#38b2ac",  # Vert menthe secondaire pour le contraste
 }
 
 FONT = ("Segoe UI", 10)
