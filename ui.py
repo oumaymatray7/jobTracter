@@ -13,14 +13,14 @@ class JobTrackerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("JobTracker – Suivi des Candidatures")
-        self.root.geometry("1100x600")  # Augmenter la taille de la fenêtre pour tout afficher
-        self.root.resizable(True, True)  # Permettre de redimensionner la fenêtre
+        self.root.geometry("1100x600")  
+        self.root.resizable(True, True)  
 
         # Initialiser en mode clair
         self.light_mode = True
         appliquer_styles(self.root, self.light_mode)
 
-        # === Ajouter un bouton pour basculer en Dark Mode ===
+        # === Ajouter un bouton pour basculer en Dark Mode 
         self.toggle_button = ttk.Button(
             root, text="Mode Sombre", command=self.toggle_mode
         )

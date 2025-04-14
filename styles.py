@@ -63,3 +63,9 @@ def appliquer_styles(root, dark_mode=False):
     
     style.map("Treeview", background=[('selected', COLORS["primary"])])
     style.map("TButton", background=[("active", COLORS["secondary"])])
+def setup_styles():
+    style = ttk.Style()
+    style.configure("TFrame", background="#F0F0F0")
+    style.configure("TLabel", background="#F0F0F0", font=("Helvetica", 11))
+    style.configure("TEntry", font=("Helvetica", 11))
+    style.configure("TButton", font=("Helvetica", 11), padding=6)

@@ -1,16 +1,15 @@
-import tkinter as tk
-from database import create_database
-from ui import JobTrackerApp
 
+
+from database import create_database, init_db  
+from login import show_login_window  
 
 def main():
-    # Créer la base de données si elle n'existe pas
-    create_database()
-
-    # Lancer l'application Tkinter
-    root = tk.Tk()
-    app = JobTrackerApp(root)
-    root.mainloop()
+   
+    create_database()  
+    init_db()         
+    
+  
+    show_login_window()
 
 if __name__ == "__main__":
     main()
