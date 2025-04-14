@@ -1,28 +1,34 @@
-# JobTracker – Suivi des Candidatures
+# 📂 JobTracker – Suivi des Candidatures
 
-JobTracker est une application pour gérer et suivre les candidatures à des offres d'emploi. Elle permet de stocker des informations sur les candidatures, y compris l'entreprise, le poste, le lien vers l'annonce, la date de la candidature, le statut, la réponse et d'autres commentaires.
+**JobTracker** est une application de bureau intuitive développée en **Python + Tkinter**, conçue pour aider les utilisateurs à **gérer efficacement leurs candidatures** à des offres d'emploi.
 
-L'application propose un mode clair et un mode sombre pour une expérience personnalisée, ainsi qu'une interface simple et intuitive pour l'ajout, la modification, et la suppression des candidatures.
+Elle propose une interface moderne, un système de **connexion / inscription sécurisé**, et une gestion complète des candidatures.
 
-## Fonctionnalités
-- Ajouter, modifier, et supprimer des candidatures.
-- Visualiser les candidatures dans un tableau dynamique.
-- Recherche des candidatures par entreprise, poste ou statut.
-- Interface utilisateur moderne avec un support de mode sombre et clair.
+---
 
-## Prérequis
+## ✨ Fonctionnalités principales
 
-Avant de commencer, assurez-vous d'avoir installé les dépendances nécessaires.
+- 🔐 **Connexion utilisateur sécurisée**
+- 📝 **Création de compte** (enregistrement de nouveaux utilisateurs)
+- ➕ Ajouter, ✏️ modifier, et 🗑️ supprimer des candidatures
+- 🔎 **Recherche dynamique** des candidatures (par entreprise, poste ou statut)
+- 📊 Tableau lisible et interactif
+- 🌙 **Mode clair / sombre** pour une meilleure expérience utilisateur
+
+---
+
+## 🧩 Technologies utilisées
 
 - Python 3.x
-- Tkinter
-- Pillow
-- SQLite (si utilisé pour la base de données)
+- Tkinter (interface graphique)
+- SQLite (base de données intégrée)
+- Pillow (gestion des icônes/images)
 
-## Installation
+---
 
-Clonez le dépôt sur votre machine locale en utilisant Git :
+## 📥 Installation
 
+1. **Cloner le projet :**
 ```bash
 git clone https://github.com/oumaymatray7/job-tracker.git
 cd job-tracker
